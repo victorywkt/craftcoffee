@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="uk" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Інтернет-магазин свіжообсмаженої кави «Смажена кава» у Львові. Замовляйте моносорти та створюйте власний бленд у конструкторі.">
+    <title>Смажена кава — Свіжообсмажена кава та твій унікальний бленд</title>
+    
+    <!-- Google Fonts: Raleway & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Raleway:wght@600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3D2314',
+                        secondary: '#FDFBF7',
+                        darktext: '#2C1810',
+                        accent: '#C96823',
+                        accentHover: '#A85217',
+                        warmBorder: '#E6DDD0',
+                        cardBg: '#FFFFFF'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Raleway', 'sans-serif']
+                    },
+                    borderRadius: {
+                        'xl': '0.75rem'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-secondary text-darktext font-sans antialiased selection:bg-accent selection:text-white flex flex-col min-h-screen">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+    <!-- 1. HEADER -->
+    <header class="sticky top-0 z-40 bg-secondary/95 backdrop-blur-md border-b border-warmBorder transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo -->
+            <a href="#hero" class="flex items-center gap-3 text-primary group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl p-1">
+                <div class="w-10 h-10 rounded-xl bg-primary text-secondary flex items-center justify-center text-xl shadow-md group-hover:bg-accent transition-colors">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-heading font-black text-xl leading-none tracking-tight text-primary">СМАЖЕНА</span>
+                    <span class="font-heading font-semibold text-xs tracking-widest text-accent uppercase">КАВА</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Anchors -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm">
+                <a href="#hero" class="hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg px-2 py-1">Головна</a>
+                <a href="#benefits" class="hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg px-2 py-1">Переваги</a>
+                <a href="#roasting-process" class="hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg px-2 py-1">Виробництво</a>
+                <a href="#services" class="hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg px-2 py-1">Каталог</a>
+                <a href="#constructor" class="hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg px-2 py-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-sliders text-accent text-xs"></i>
+                    <span>Конструктор</span>
+                </a>
+                <a href="#contacts" class="hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg px-2 py-1">Контакти</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <a href="#constructor" title="Створити власний бленд" class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                    <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+                    <span class="hidden lg:inline">Свій бленд</span>
+                </a>
+
+                <!-- Cart Button -->
+                <button id="cart-btn" onclick="openCartModal()" class="relative p-2.5 rounded-xl bg-primary text-secondary hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Переглянути кошик">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cart-counter" class="hidden absolute -top-1.5 -right-1.5 bg-accent text-white text-xs font-bold w-5 h-5 rounded-full border-2 border-secondary flex items-center justify-center animate-pulse">0</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-xl text-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Відкрити меню">
+                    <i id="menu-icon" class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-secondary border-b border-warmBorder px-4 pt-2 pb-6 space-y-3">
+            <a href="#hero" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-xl font-medium text-darktext hover:bg-primary/5 hover:text-accent">Головна</a>
+            <a href="#benefits" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-xl font-medium text-darktext hover:bg-primary/5 hover:text-accent">Переваги</a>
+            <a href="#roasting-process" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-xl font-medium text-darktext hover:bg-primary/5 hover:text-accent">Виробництво</a>
+            <a href="#services" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-xl font-medium text-darktext hover:bg-primary/5 hover:text-accent">Каталог</a>
+            <a href="#constructor" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-xl font-medium text-darktext hover:bg-primary/5 hover:text-accent flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+                <span>Конструктор бленду</span>
+            </a>
+            <a href="#contacts" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-xl font-medium text-darktext hover:bg-primary/5 hover:text-accent">Контакти</a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- 2. HERO SECTION -->
+        <section id="hero" class="relative pt-12 pb-12 md:pt-20 md:pb-20 lg:pt-24 lg:pb-24 overflow-hidden scroll-mt-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Hero Content -->
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-primary/10 text-primary text-xs sm:text-sm font-semibold tracking-wide uppercase">
+                            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                            <span>Свіже крафтове обсмаження 24/7</span>
+                        </div>
+                        
+                        <h1 class="font-heading font-black text-3xl sm:text-5xl lg:text-6xl text-primary leading-tight tracking-tight">
+                            Кава, яка створюється <br class="hidden sm:inline" />
+                            <span class="text-accent underline decoration-accent/30 decoration-wavy">під твій смак</span>
+                        </h1>
+                        
+                        <p class="text-base sm:text-lg text-darktext/80 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                            Обирайте із готових сортів Specialty кави або створіть власне неповторне поєднання зерен Арабіки та Робусти під свій смаковий профіль.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                            <a href="#services" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-primary text-secondary font-semibold text-center hover:bg-accent transition-all duration-200 shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-store"></i>
+                                <span>Обрати каву</span>
+                            </a>
+                            <a href="#constructor" class="w-full sm:w-auto px-8 py-4 rounded-xl border-2 border-primary/30 text-primary font-semibold text-center hover:bg-primary/5 hover:border-primary transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Створити бленд</span>
+                            </a>
+                        </div>
+
+                        <!-- Highlights Banner -->
+                        <div class="pt-8 border-t border-warmBorder/60 grid grid-cols-3 gap-4 text-center lg:text-left">
+                            <div>
+                                <p class="font-heading font-bold text-xl sm:text-2xl text-primary">100%</p>
+                                <p class="text-xs text-darktext/70">Specialty Зерно</p>
+                            </div>
+                            <div>
+                                <p class="font-heading font-bold text-xl sm:text-2xl text-primary">24 год</p>
+                                <p class="text-xs text-darktext/70">Відправка після обсмажування</p>
+                            </div>
+                            <div>
+                                <p class="font-heading font-bold text-xl sm:text-2xl text-primary">4.9/5</p>
+                                <p class="text-xs text-darktext/70">Оцінка кавоманів</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Hero Visual -->
+                    <div class="lg:col-span-5 relative">
+                        <div class="relative mx-auto max-w-md lg:max-w-none">
+                            <div class="absolute -inset-4 bg-accent/10 rounded-3xl blur-2xl transform rotate-3"></div>
+                            <div class="relative bg-cardBg p-3 rounded-xl shadow-xl border border-warmBorder">
+                                <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80" 
+                                     alt="Свіжообсмажені зерна кави та ароматне еспресо" 
+                                     class="rounded-xl w-full h-80 sm:h-96 object-cover">
+                                <div class="absolute -bottom-6 -left-6 bg-primary text-secondary p-4 rounded-xl shadow-xl flex items-center gap-3 border border-secondary/20 hidden sm:flex">
+                                    <div class="w-10 h-10 rounded-xl bg-accent flex items-center justify-center text-white text-lg">
+                                        <i class="fa-solid fa-award"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-heading font-bold text-sm">Авторське обсмаження</p>
+                                        <p class="text-xs text-secondary/70">Крафтовий підхід до кожного зерна</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. BENEFITS SECTION -->
+        <section id="benefits" class="py-16 bg-primary/5 border-y border-warmBorder scroll-mt-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+                    <h2 class="font-heading font-bold text-3xl sm:text-4xl text-primary">Чому обирають «Смажену каву»</h2>
+                    <p class="text-darktext/75 text-base">Ми контролюємо кожен етап: від прямого імпорту зеленого зерна до точного обсмаження під ваше замовлення.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Benefit 1 -->
+                    <div class="bg-cardBg p-8 rounded-xl border border-warmBorder shadow-sm hover:shadow-md transition-shadow group">
+                        <div class="w-14 h-14 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-secondary transition-colors flex items-center justify-center text-2xl mb-6">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl text-primary mb-3">Гарантія свіжості</h3>
+                        <p class="text-darktext/80 leading-relaxed text-sm">
+                            Обсмажуємо зерна виключно після вашого замовлення. Ви отримуєте каву на піку її аромату.
+                        </p>
+                    </div>
+
+                    <!-- Benefit 2 -->
+                    <div class="bg-cardBg p-8 rounded-xl border border-warmBorder shadow-sm hover:shadow-md transition-shadow group">
+                        <div class="w-14 h-14 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-secondary transition-colors flex items-center justify-center text-2xl mb-6">
+                            <i class="fa-solid fa-fire"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl text-primary mb-3">100% Specialty Зерно</h3>
+                        <p class="text-darktext/80 leading-relaxed text-sm">
+                            Працюємо тільки з відбірною Арабікою та високогірною Робустою з плантацій Ефіопії та Колумбії.
+                        </p>
+                    </div>
+
+                    <!-- Benefit 3 -->
+                    <div class="bg-cardBg p-8 rounded-xl border border-warmBorder shadow-sm hover:shadow-md transition-shadow group md:col-span-2 lg:col-span-1">
+                        <div class="w-14 h-14 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-secondary transition-colors flex items-center justify-center text-2xl mb-6">
+                            <i class="fa-solid fa-truck-fast"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl text-primary mb-3">Швидка доставка</h3>
+                        <p class="text-darktext/80 leading-relaxed text-sm">
+                            Швидка відправка по всій Україні Новою Поштою. Безкоштовна доставка для замовлень від 1000 грн.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. MEDIA SECTION: YOUTUBE VIDEO -->
+        <section id="roasting-process" class="py-16 md:py-24 bg-secondary scroll-mt-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-10 space-y-3">
+                    <span class="inline-block px-3.5 py-1.5 rounded-xl bg-primary/10 text-primary text-xs sm:text-sm font-semibold tracking-wide">
+                        Крафтове виробництво
+                    </span>
+                    <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-primary tracking-tight">
+                        Як народжується ідеальний смак
+                    </h2>
+                    <p class="text-base text-darktext/80">
+                        Зазирніть за лаштунки нашого ростеріуму: від зеленого зерна до ароматного обсмаження у ростері щовівторка та щоп'ятниці.
+                    </p>
+                </div>
+
+                <figure class="max-w-4xl mx-auto">
+                    <div class="max-w-3xl mx-auto aspect-video rounded-xl overflow-hidden shadow-lg">
+                    <iframe 
+                        title="Відеопрезентація процесу"
+                        class="w-full h-full"
+                        src="https://www.youtube.com/embed/yXKVjt6cPRM" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                    <figcaption class="mt-4 text-center text-sm text-darktext/70 font-medium">
+                        Відеоогляд процесу обсмаження кожної партії преміальної арабіки у Львові.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <!-- 5. SERVICES SECTION (Catalog & Custom Blend Constructor) -->
+        <section id="services" class="py-16 md:py-24 border-t border-warmBorder scroll-mt-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+                
+                <!-- CATALOG -->
+                <div>
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                        <div>
+                            <span class="text-accent font-semibold uppercase text-xs tracking-wider">Каталог готових рішень</span>
+                            <h2 class="font-heading font-bold text-3xl sm:text-4xl text-primary mt-1">Авторські бленди та моносорти</h2>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="filterCatalog('all', this)" class="catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white transition-all">Всі</button>
+                            <button onclick="filterCatalog('espresso', this)" class="catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-warmBorder text-darktext hover:border-primary transition-all">Еспресо</button>
+                            <button onclick="filterCatalog('filter', this)" class="catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-warmBorder text-darktext hover:border-primary transition-all">Фільтр</button>
+                            <button onclick="filterCatalog('single', this)" class="catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-warmBorder text-darktext hover:border-primary transition-all">Моносорти</button>
+                        </div>
+                    </div>
+
+                    <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Card 1 -->
+                        <div class="catalog-card bg-cardBg rounded-xl border border-warmBorder overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="espresso">
+                            <div>
+                                <div class="relative h-56 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80" alt="Еспресо Бленд Оксамит" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                                    <span class="absolute top-3 right-3 bg-primary text-secondary text-xs font-bold px-3 py-1 rounded-full">Хіт Еспресо</span>
+                                </div>
+                                <div class="p-6">
+                                    <span class="text-xs px-2.5 py-1 rounded-md bg-accent/10 text-accent font-semibold">80% Арабіка / 20% Робуста</span>
+                                    <h3 class="font-heading font-bold text-xl text-primary my-2">Еспресо Бленд Оксамит</h3>
+                                    <p class="text-xs text-darktext/75 mb-4">Баланс чорного шоколаду, лісового горіху та густої крема.</p>
+                                </div>
+                            </div>
+                            <div class="px-6 pb-6 flex items-center justify-between border-t border-warmBorder/40 pt-4">
+                                <div>
+                                    <span class="text-xs text-darktext/60 block">250g</span>
+                                    <span class="font-heading font-bold text-xl text-primary">280 ₴</span>
+                                </div>
+                                <button onclick="addToCart('Еспресо Бленд Оксамит', 280, '250g')" class="px-4 py-2.5 rounded-xl bg-primary text-white hover:bg-accent transition-colors text-sm font-semibold flex items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> В кошик
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="catalog-card bg-cardBg rounded-xl border border-warmBorder overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="filter">
+                            <div>
+                                <div class="relative h-56 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?auto=format&fit=crop&w=600&q=80" alt="Ефіопія Яргачеф" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                                    <span class="absolute top-3 right-3 bg-accent text-white text-xs font-bold px-3 py-1 rounded-full">Specialty Фільтр</span>
+                                </div>
+                                <div class="p-6">
+                                    <span class="text-xs px-2.5 py-1 rounded-md bg-accent/10 text-accent font-semibold">100% Арабіка</span>
+                                    <h3 class="font-heading font-bold text-xl text-primary my-2">Ефіопія Яргачеф</h3>
+                                    <p class="text-xs text-darktext/75 mb-4">Яскраві ноти жасмину, бергамоту та спелого персика.</p>
+                                </div>
+                            </div>
+                            <div class="px-6 pb-6 flex items-center justify-between border-t border-warmBorder/40 pt-4">
+                                <div>
+                                    <span class="text-xs text-darktext/60 block">250g</span>
+                                    <span class="font-heading font-bold text-xl text-primary">340 ₴</span>
+                                </div>
+                                <button onclick="addToCart('Ефіопія Яргачеф', 340, '250g')" class="px-4 py-2.5 rounded-xl bg-primary text-white hover:bg-accent transition-colors text-sm font-semibold flex items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> В кошик
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="catalog-card bg-cardBg rounded-xl border border-warmBorder overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="single">
+                            <div>
+                                <div class="relative h-56 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=600&q=80" alt="Колумбія Супремо" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                                </div>
+                                <div class="p-6">
+                                    <span class="text-xs px-2.5 py-1 rounded-md bg-accent/10 text-accent font-semibold">100% Арабіка</span>
+                                    <h3 class="font-heading font-bold text-xl text-primary my-2">Колумбія Супремо</h3>
+                                    <p class="text-xs text-darktext/75 mb-4">Класичний збалансований смак із відтінками тростинного цукру.</p>
+                                </div>
+                            </div>
+                            <div class="px-6 pb-6 flex items-center justify-between border-t border-warmBorder/40 pt-4">
+                                <div>
+                                    <span class="text-xs text-darktext/60 block">250g</span>
+                                    <span class="font-heading font-bold text-xl text-primary">310 ₴</span>
+                                </div>
+                                <button onclick="addToCart('Колумбія Супремо', 310, '250g')" class="px-4 py-2.5 rounded-xl bg-primary text-white hover:bg-accent transition-colors text-sm font-semibold flex items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> В кошик
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSTRUCTOR -->
+                <div id="constructor" class="bg-cardBg rounded-xl border-2 border-accent/20 p-6 sm:p-10 shadow-xl scroll-mt-24">
+                    <div class="max-w-3xl mb-8 space-y-2">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Інтерактивний сервіс
+                        </span>
+                        <h2 class="font-heading font-black text-3xl sm:text-4xl text-primary">Конструктор власного бленду</h2>
+                        <p class="text-darktext/80 text-sm sm:text-base">Обирайте відсоток Арабіки та Робусти під свій смаковий профіль!</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        <div class="lg:col-span-7 space-y-6">
+                            <div class="bg-secondary p-5 rounded-xl border border-warmBorder space-y-3">
+                                <div class="flex justify-between items-center font-heading font-bold text-sm text-primary">
+                                    <span id="arabica-label">Арабіка: 75%</span>
+                                    <span id="robusta-label">Робуста: 25%</span>
+                                </div>
+                                <input type="range" id="ratio-slider" min="0" max="100" value="75" step="5" oninput="updateConstructor()" class="w-full accent-accent h-2 bg-warmBorder rounded-lg cursor-pointer">
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-5 bg-primary text-secondary p-6 rounded-xl space-y-6 shadow-lg">
+                            <h3 class="font-heading font-bold text-xl border-b border-secondary/20 pb-3">Профіль бленду</h3>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-secondary/70 block">Ціна за упаковку (250g)</span>
+                                    <span id="calculated-price" class="font-heading font-black text-3xl text-white">330 ₴</span>
+                                </div>
+                                <button onclick="addCustomBlendToCart()" class="px-5 py-3.5 rounded-xl bg-accent text-white font-bold hover:bg-accentHover transition-colors text-sm shadow-md">
+                                    В кошик
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 6. CONTACTS & GOOGLE MAPS SECTION -->
+        <section id="contacts" class="py-16 md:py-24 bg-secondary scroll-mt-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+                    <span class="inline-block px-3.5 py-1.5 rounded-xl bg-primary/10 text-primary text-xs sm:text-sm font-semibold tracking-wide">
+                        Завітайте до нас
+                    </span>
+                    <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-primary tracking-tight">
+                        Наші контакти та локація
+                    </h2>
+                    <p class="text-base text-darktext/80">
+                        Чекаємо на вас у нашій ростерії у Львові. Завжди свіжа кава та професійні консультації.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <!-- Contact Info Cards -->
+                    <div class="lg:col-span-4 space-y-4">
+                        <div class="bg-cardBg p-6 rounded-xl border border-warmBorder shadow-sm flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-heading font-bold text-base text-primary">Адреса</h3>
+                                <p class="text-xs text-darktext/75 mt-1">м. Львів, вул. Княгині Ольги, 100</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardBg p-6 rounded-xl border border-warmBorder shadow-sm flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-heading font-bold text-base text-primary">Телефон</h3>
+                                <p class="text-xs text-darktext/75 mt-1">+380 (97) 123-45-67</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardBg p-6 rounded-xl border border-warmBorder shadow-sm flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-heading font-bold text-base text-primary">Графік роботи</h3>
+                                <p class="text-xs text-darktext/75 mt-1">Пн-Пт: 09:00 - 19:00<br>Сб-Нд: 10:00 - 16:00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Google Maps Container -->
+                    <div class="lg:col-span-8">
+                        <div class="rounded-xl overflow-hidden shadow-lg border border-warmBorder aspect-video md:aspect-[21/9] w-full bg-warmBorder/30">
+                            <iframe 
+                                class="w-full h-full border-0"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2574.6258410223596!2d24.00412807689725!3d49.81189397147746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473ae7f4df498d57%3A0xa1d5fae14f9d4ef8!2z0LLRg9 me0LjRhtGPINCa0L3Rj9Cz0LjQvdGWINCe0LvRjNCz0LgsIDEwMCwg0JvRjNCy0ZbQsiwg0JvRjNCy0ZbQstGB0YzQutCwINC-0LHQu9Cw0YHRgtGMLCA3OTAwMA!5e0!3m2!1suk!2sua!4v1700000000000!5m2!1suk!2sua"
+                                title="Розташування ростерії Смажена кава на карті" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. CTA SECTION -->
+        <section id="cta" class="py-16 bg-primary text-secondary">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+                <h2 class="font-heading font-black text-3xl sm:text-4xl">Отримай знижку 10% на перше замовлення</h2>
+                <p class="text-secondary/80 max-w-xl mx-auto text-sm sm:text-base">Введіть email та отримайте промокод у наш чат-бот чи на пошту.</p>
+                <form onsubmit="handleSubscribe(event)" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input type="email" required placeholder="Ваш e-mail" class="px-4 py-3 rounded-xl bg-white/10 text-white placeholder-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-accent flex-grow text-sm">
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-accent text-white font-bold hover:bg-accentHover transition-colors text-sm">Отримати</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- 8. FOOTER -->
+    <footer class="bg-primary/95 text-secondary border-t border-secondary/10 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 sm:px-8 text-center text-xs text-secondary/60">
+            <p>© 2026 Смажена кава. Всі права захищено.</p>
+        </div>
+    </footer>
+
+    <!-- CART MODAL -->
+    <div id="cart-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeCartModal()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-secondary shadow-2xl p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-warmBorder">
+                    <h3 class="font-heading font-bold text-xl text-primary"><i class="fa-solid fa-cart-shopping text-accent"></i> Ваш кошик</h3>
+                    <button onclick="closeCartModal()" class="text-darktext/60 hover:text-primary"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div id="cart-items" class="py-4 space-y-3">
+                    <p class="text-center text-sm text-darktext/60 py-8">Ваш кошик порожній</p>
+                </div>
+            </div>
+            <div class="border-t border-warmBorder pt-4 space-y-4">
+                <div class="flex justify-between items-center font-heading font-bold text-lg text-primary">
+                    <span>Разом:</span>
+                    <span id="cart-total-price">0 ₴</span>
+                </div>
+                <button onclick="checkoutCart()" class="w-full py-3.5 bg-primary text-secondary rounded-xl font-bold hover:bg-accent transition-colors text-sm">Оформити замовлення</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let cart = [];
+        let constructorState = { arabica: 75, robusta: 25 };
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function filterCatalog(category, btn) {
+            document.querySelectorAll('.catalog-filter-btn').forEach(b => b.className = 'catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-warmBorder text-darktext hover:border-primary transition-all');
+            btn.className = 'catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white transition-all';
+            document.querySelectorAll('.catalog-card').forEach(card => {
+                card.classList.toggle('hidden', category !== 'all' && card.dataset.category !== category);
+            });
+        }
+
+        function updateConstructor() {
+            const val = document.getElementById('ratio-slider').value;
+            constructorState.arabica = val;
+            constructorState.robusta = 100 - val;
+            document.getElementById('arabica-label').innerText = `Арабіка: ${val}%`;
+            document.getElementById('robusta-label').innerText = `Робуста: ${100 - val}%`;
+            document.getElementById('calculated-price').innerText = `${260 + Math.round(val * 0.9)} ₴`;
+        }
+
+        function addToCart(title, price, size) {
+            cart.push({ id: Date.now(), title, price, size });
+            updateCartUI();
+        }
+
+        function addCustomBlendToCart() {
+            const sliderVal = document.getElementById('ratio-slider').value;
+            const arabica = sliderVal;
+            const robusta = 100 - sliderVal;
+            const price = 260 + Math.round(sliderVal * 0.9);
+            
+            const title = `Власний бленд (${arabica}% Арабіка / ${robusta}% Робуста)`;
+            addToCart(title, price, '250g');
+        }
+
+        function updateCartUI() {
+            const counter = document.getElementById('cart-counter');
+            counter.innerText = cart.length;
+            counter.classList.toggle('hidden', cart.length === 0);
+            const container = document.getElementById('cart-items');
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-center text-sm text-darktext/60 py-8">Ваш кошик порожній</p>';
+                document.getElementById('cart-total-price').innerText = '0 ₴';
+                return;
+            }
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                total += item.price;
+                return `<div class="flex justify-between bg-primary/5 p-3 rounded-xl border border-warmBorder">
+                    <div><p class="font-bold text-sm text-primary">${item.title}</p><p class="text-xs text-darktext/60">${item.size} • ${item.price} ₴</p></div>
+                </div>`;
+            }).join('');
+            document.getElementById('cart-total-price').innerText = `${total} ₴`;
+        }
+
+        function openCartModal() { document.getElementById('cart-modal').classList.remove('hidden'); }
+        function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
+        function checkoutCart() { alert('Замовлення успішно оформлено!'); cart = []; updateCartUI(); closeCartModal(); }
+        function handleSubscribe(e) { e.preventDefault(); alert('Промокод надіслано!'); e.target.reset(); }
+    </script>
+</body>
+</html>
