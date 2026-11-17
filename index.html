@@ -506,69 +506,165 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        let cart = [];
-        let constructorState = { arabica: 75, robusta: 25 };
+    let cart = [];
+    let constructorState = { arabica: 75, robusta: 25 };
 
-        function toggleMobileMenu() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
+    function toggleMobileMenu() {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    }
+
+    function filterCatalog(category, btn) {
+        document.querySelectorAll('.catalog-filter-btn').forEach(b => b.className = 'catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-warmBorder text-darktext hover:border-primary transition-all');
+        btn.className = 'catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white transition-all';
+        document.querySelectorAll('.catalog-card').forEach(card => {
+            card.classList.toggle('hidden', category !== 'all' && card.dataset.category !== category);
+        });
+    }
+
+    function updateConstructor() {
+        const val = document.getElementById('ratio-slider').value;
+        constructorState.arabica = val;
+        constructorState.robusta = 100 - val;
+        document.getElementById('arabica-label').innerText = `Арабіка: ${val}%`;
+        document.getElementById('robusta-label').innerText = `Робуста: ${100 - val}%`;
+        document.getElementById('calculated-price').innerText = `${260 + Math.round(val * 0.9)} ₴`;
+    }
+
+    function addToCart(title, price, size) {
+        cart.push({ id: Date.now(), title, price, size });
+        updateCartUI();
+    }
+
+    function addCustomBlendToCart() {
+        const sliderVal = document.getElementById('ratio-slider').value;
+        const arabica = sliderVal;
+        const robusta = 100 - sliderVal;
+        const price = 260 + Math.round(sliderVal * 0.9);
+
+        const title = `Власний бленд (${arabica}% Арабіка / ${robusta}% Робуста)`;
+        addToCart(title, price, '250g');
+    }
+
+    function updateCartUI() {
+        const counter = document.getElementById('cart-counter');
+        counter.innerText = cart.length;
+        counter.classList.toggle('hidden', cart.length === 0);
+
+        const container = document.getElementById('cart-items');
+        const checkoutSection = document.querySelector('#cart-modal .border-t'); // Блок с ценой и кнопкой оформления
+
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-center text-sm text-darktext/60 py-8">Ваш кошик порожній</p>';
+            document.getElementById('cart-total-price').innerText = '0 ₴';
+            if (checkoutSection) checkoutSection.classList.add('hidden'); // Скрываем кнопку, если пусто
+            return;
         }
 
-        function filterCatalog(category, btn) {
-            document.querySelectorAll('.catalog-filter-btn').forEach(b => b.className = 'catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-warmBorder text-darktext hover:border-primary transition-all');
-            btn.className = 'catalog-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white transition-all';
-            document.querySelectorAll('.catalog-card').forEach(card => {
-                card.classList.toggle('hidden', category !== 'all' && card.dataset.category !== category);
-            });
-        }
+        if (checkoutSection) checkoutSection.classList.remove('hidden'); // Показываем кнопку, когда есть товары
 
-        function updateConstructor() {
-            const val = document.getElementById('ratio-slider').value;
-            constructorState.arabica = val;
-            constructorState.robusta = 100 - val;
-            document.getElementById('arabica-label').innerText = `Арабіка: ${val}%`;
-            document.getElementById('robusta-label').innerText = `Робуста: ${100 - val}%`;
-            document.getElementById('calculated-price').innerText = `${260 + Math.round(val * 0.9)} ₴`;
-        }
+        let total = 0;
+        container.innerHTML = cart.map(item => {
+            total += item.price;
+            return `<div class="flex justify-between items-center bg-primary/5 p-3 rounded-xl border border-warmBorder">
+                <div>
+                    <p class="font-bold text-sm text-primary">${item.title}</p>
+                    <p class="text-xs text-darktext/60">${item.size} • ${item.price} ₴</p>
+                </div>
+            </div>`;
+        }).join('');
 
-        function addToCart(title, price, size) {
-            cart.push({ id: Date.now(), title, price, size });
-            updateCartUI();
-        }
+        document.getElementById('cart-total-price').innerText = `${total} ₴`;
+    }
 
-        function addCustomBlendToCart() {
-            const sliderVal = document.getElementById('ratio-slider').value;
-            const arabica = sliderVal;
-            const robusta = 100 - sliderVal;
-            const price = 260 + Math.round(sliderVal * 0.9);
-            
-            const title = `Власний бленд (${arabica}% Арабіка / ${robusta}% Робуста)`;
-            addToCart(title, price, '250g');
-        }
+    function openCartModal() { 
+        document.getElementById('cart-modal').classList.remove('hidden'); 
+    }
 
-        function updateCartUI() {
-            const counter = document.getElementById('cart-counter');
-            counter.innerText = cart.length;
-            counter.classList.toggle('hidden', cart.length === 0);
-            const container = document.getElementById('cart-items');
-            if (cart.length === 0) {
-                container.innerHTML = '<p class="text-center text-sm text-darktext/60 py-8">Ваш кошик порожній</p>';
-                document.getElementById('cart-total-price').innerText = '0 ₴';
-                return;
-            }
-            let total = 0;
-            container.innerHTML = cart.map(item => {
-                total += item.price;
-                return `<div class="flex justify-between bg-primary/5 p-3 rounded-xl border border-warmBorder">
-                    <div><p class="font-bold text-sm text-primary">${item.title}</p><p class="text-xs text-darktext/60">${item.size} • ${item.price} ₴</p></div>
-                </div>`;
-            }).join('');
-            document.getElementById('cart-total-price').innerText = `${total} ₴`;
-        }
+    function closeCartModal() { 
+        document.getElementById('cart-modal').classList.add('hidden'); 
+    }
 
-        function openCartModal() { document.getElementById('cart-modal').classList.remove('hidden'); }
-        function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
-        function checkoutCart() { alert('Замовлення успішно оформлено!'); cart = []; updateCartUI(); closeCartModal(); }
-        function handleSubscribe(e) { e.preventDefault(); alert('Промокод надіслано!'); e.target.reset(); }
-    </script>
+    function closeCheckoutModal() {
+        document.getElementById('checkout-modal').classList.add('hidden');
+    }
+
+    function checkoutCart() {
+        if (cart.length === 0) return;
+
+        // Вычисляем общую сумму для формы
+        let total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('checkout-total-price').innerText = `${total} ₴`;
+
+        closeCartModal(); // Закрываем окно корзины
+        document.getElementById('checkout-modal').classList.remove('hidden'); // Открываем форму ввода данных
+    }
+
+    function submitOrder(e) {
+        e.preventDefault(); // Предотвращаем перезагрузку страницы
+
+        const name = document.getElementById('order-name').value;
+        
+        // Очищаем корзину и обновляем интерфейс
+        cart = [];
+        updateCartUI();
+        
+        // Закрываем модальное окно формы
+        closeCheckoutModal();
+
+        // Очищаем поля формы
+        document.getElementById('checkout-form').reset();
+
+        // Показываем подтверждение
+        alert(`Дякуємо, ${name}! Ваше замовлення успішно оформлено. Ми зв'яжемося з вами найближчим часом.`);
+    }
+
+    function handleSubscribe(e) { 
+        e.preventDefault(); 
+        alert('Промокод надіслано!'); 
+        e.target.reset(); 
+    }
+</script>
+<!-- CHECKOUT MODAL (Форма ввода данных) -->
+<div id="checkout-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeCheckoutModal()"></div>
+    <div class="absolute inset-0 m-auto max-w-lg w-full bg-secondary shadow-2xl p-6 sm:p-8 rounded-2xl border border-warmBorder flex flex-col max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-warmBorder mb-6">
+            <h3 class="font-heading font-bold text-xl text-primary">
+                <i class="fa-solid fa-clipboard-check text-accent"></i> Оформлення замовлення
+            </h3>
+            <button onclick="closeCheckoutModal()" class="text-darktext/60 hover:text-primary">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-1">Ваше ім'я та прізвище</label>
+                <input type="text" id="order-name" required placeholder="Ваше ім'я" class="w-full px-4 py-3 rounded-xl bg-white border border-warmBorder focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-1">Номер телефону</label>
+                <input type="tel" id="order-phone" required placeholder="+380 (00) 000-00-00" class="w-full px-4 py-3 rounded-xl bg-white border border-warmBorder focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-primary mb-1">Місто та відділення Нової Пошти</label>
+                <input type="text" id="order-address" required placeholder="м. Місто, відділення №" class="w-full px-4 py-3 rounded-xl bg-white border border-warmBorder focus:outline-none focus:ring-2 focus:ring-accent text-sm">
+            </div>
+
+            <div class="bg-primary/5 p-4 rounded-xl border border-warmBorder my-4">
+                <div class="flex justify-between items-center text-sm font-semibold text-primary">
+                    <span>До сплати (з урахуванням товарів):</span>
+                    <span id="checkout-total-price" class="font-heading font-black text-lg text-accent">0 ₴</span>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-primary text-secondary rounded-xl font-bold hover:bg-accent transition-colors text-sm shadow-md">
+                Підтвердити замовлення
+            </button>
+        </form>
+    </div>
+</div>
 </body>
 </html>
