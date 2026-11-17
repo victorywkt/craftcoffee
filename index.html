@@ -472,6 +472,123 @@
                 </form>
             </div>
         </section>
+        <!-- Контейнер форми зворотного зв'язку -->
+<section class="py-12 bg-secondary flex justify-center items-center px-4">
+    <div class="w-full max-w-2xl bg-cardBg p-6 sm:p-8 rounded-2xl border border-warmBorder shadow-xl">
+        
+        <div class="mb-6 text-center">
+            <h2 class="font-heading font-black text-2xl sm:text-3xl text-primary">Зворотний зв'язок</h2>
+            <p class="text-xs sm:text-sm text-darktext/70 mt-1">Заповніть форму, і ми зв'яжемося з вами найближчим часом.</p>
+        </div>
+
+        <!-- Початок форми (без JS, суто структура та стилі) -->
+        <form id="feedbackForm" novalidate class="space-y-4">
+            
+            <!-- Сітка для адаптивності (1 колонка на мобільних, 2 на десктопі) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- Поле: Ім'я -->
+                <div class="space-y-1.5">
+                    <label for="username" class="block text-xs font-bold uppercase tracking-wider text-primary">Ім'я <span class="text-accent">*</span></label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        required 
+                        placeholder="Введіть ваше ім'я"
+                        aria-describedby="nameError"
+                        aria-invalid="false"
+                        class="w-full px-4 py-3 rounded-xl bg-white border border-warmBorder text-darktext text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                    >
+                    <!-- Блок помилки -->
+                    <p id="nameError" class="hidden text-xs text-red-500 font-medium">Введіть коректне ім'я (мінімум 2 символи).</p>
+                </div>
+
+                <!-- Поле: Емейл -->
+                <div class="space-y-1.5">
+                    <label for="email" class="block text-xs font-bold uppercase tracking-wider text-primary">Електронна пошта <span class="text-accent">*</span></label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required 
+                        placeholder="name@example.com"
+                        aria-describedby="emailError"
+                        aria-invalid="false"
+                        class="w-full px-4 py-3 rounded-xl bg-white border border-warmBorder text-darktext text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                    >
+                    <!-- Блок помилки -->
+                    <p id="emailError" class="hidden text-xs text-red-500 font-medium">Введіть коректну електронну адресу.</p>
+                </div>
+
+            </div>
+
+            <!-- Поле: Телефон -->
+            <div class="space-y-1.5">
+                <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-primary">Номер телефону <span class="text-accent">*</span></label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    required 
+                    placeholder="+380XXXXXXXXX"
+                    aria-describedby="phoneError"
+                    aria-invalid="false"
+                    class="w-full px-4 py-3 rounded-xl bg-white border border-warmBorder text-darktext text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                >
+                <!-- Блок помилки -->
+                <p id="phoneError" class="hidden text-xs text-red-500 font-medium">Введіть номер у форматі +380XXXXXXXXX.</p>
+            </div>
+
+            <!-- Поле: Повідомлення -->
+            <div class="space-y-1.5">
+                <label for="message" class="block text-xs font-bold uppercase tracking-wider text-primary">Повідомлення <span class="text-accent">*</span></label>
+                <textarea 
+                    id="message" 
+                    name="message" 
+                    rows="4" 
+                    required 
+                    placeholder="Ваше повідомлення..."
+                    aria-describedby="messageError"
+                    aria-invalid="false"
+                    class="w-full px-4 py-3 rounded-xl bg-white border border-warmBorder text-darktext text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
+                ></textarea>
+                <!-- Блок помилки -->
+                <p id="messageError" class="hidden text-xs text-red-500 font-medium">Повідомлення занадто коротке (мінімум 10 символів).</p>
+            </div>
+
+            <!-- Чекбокс: Згода з політикою -->
+            <div class="flex items-start gap-3 pt-2">
+                <div class="flex items-center h-5">
+                    <input 
+                        type="checkbox" 
+                        id="agreement" 
+                        name="agreement" 
+                        required
+                        class="w-4 h-4 rounded border-warmBorder text-accent focus:ring-accent accent-accent cursor-pointer"
+                    >
+                </div>
+                <div class="text-xs">
+                    <label for="agreement" class="text-darktext/80 cursor-pointer">
+                        Погоджуюся з <a href="#" class="text-accent underline hover:text-accentHover">політикою конфіденційності</a> та обробкою персональних даних <span class="text-accent">*</span>
+                    </label>
+                    <p id="agreementError" class="hidden text-xs text-red-500 font-medium mt-1">Потрібна ваша згода для продовження.</p>
+                </div>
+            </div>
+
+            <!-- Кнопка надсилання -->
+            <div class="pt-4">
+                <button 
+                    type="submit" 
+                    class="w-full py-4 px-6 rounded-xl bg-primary text-secondary font-bold text-sm tracking-wide shadow-md hover:bg-accent hover:shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 cursor-pointer"
+                >
+                    Надіслати
+                </button>
+            </div>
+
+        </form>
+    </div>
+</section>
     </main>
 
     <!-- 8. FOOTER -->
@@ -666,5 +783,44 @@
         </form>
     </div>
 </div>
+<!-- Модальне вікно імітації успішного надсилання форми -->
+<div id="success-modal" 
+     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" 
+     role="dialog" 
+     aria-modal="true" 
+     aria-labelledby="success-modal-title" 
+     aria-describedby="success-modal-desc">
+    
+    <!-- Затемнення фону -->
+    <div id="success-modal-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Контент вікна -->
+    <div class="relative bg-cardBg w-full max-w-md rounded-2xl border border-warmBorder p-6 sm:p-8 shadow-2xl text-center space-y-5 z-10">
+        
+        <!-- Іконка успіху -->
+        <div class="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-3xl mx-auto">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <div class="space-y-2">
+            <h3 id="success-modal-title" class="font-heading font-black text-2xl text-primary">
+                Дякуємо!
+            </h3>
+            <p id="success-modal-desc" class="text-sm text-darktext/80 leading-relaxed">
+                Ваше повідомлення успішно надіслано. 
+                <span class="block text-xs text-darktext/60 mt-2 italic">
+                    (Імітація успішного надсилання: форма пройшла клієнтську валідацію)
+                </span>
+            </p>
+        </div>
+
+        <button id="close-success-modal" 
+                type="button" 
+                class="w-full py-3.5 px-6 rounded-xl bg-primary text-secondary font-bold text-sm hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 cursor-pointer">
+            Закрити
+        </button>
+    </div>
+</div>
+<script src="java.js"></script>
 </body>
 </html>
